@@ -1,32 +1,45 @@
 /**
- * Claude Flow V3 Main Index
- *
- * Exports all public APIs for the V3 modular architecture.
+ * Ultron Agent - Advanced Agent Meta-Harness
+ * Main entry point for the Ultron agent system
  */
 
-// Shared Types
-export * from './shared/types';
+import { PluginRegistry } from './core/plugin-registry';
+import { AgentOrchestrator } from './core/orchestrator';
 
-// Domain Entities
-export { Agent } from './agent-lifecycle/domain/Agent';
-export { Task } from './task-execution/domain/Task';
-export { MemoryEntity, type Memory } from './memory/domain/Memory';
+export class UltronAgent {
+  private registry: PluginRegistry;
+  private orchestrator: AgentOrchestrator;
 
-// Application Services
-export { SwarmCoordinator, type SwarmCoordinatorOptions } from './coordination/application/SwarmCoordinator';
-export { WorkflowEngine, type WorkflowEngineOptions } from './task-execution/application/WorkflowEngine';
+  constructor() {
+    this.registry = new PluginRegistry();
+    this.orchestrator = new AgentOrchestrator(this.registry);
+  }
 
-// Memory Infrastructure
-export { HybridBackend } from './memory/infrastructure/HybridBackend';
-export { SQLiteBackend } from './memory/infrastructure/SQLiteBackend';
-export { AgentDBBackend } from './memory/infrastructure/AgentDBBackend';
+  async initialize(): Promise<void> {
+    console.log('🤖 Initializing Ultron Agent...');
+    await this.registry.loadPlugins();
+    await this.orchestrator.setup();
+    console.log('✅ Ultron Agent initialized successfully');
+  }
 
-// Plugin Infrastructure
-export { PluginManager, type PluginManagerOptions } from './infrastructure/plugins/PluginManager';
-export { BasePlugin, type Plugin, type ExtensionPoint } from './infrastructure/plugins/Plugin';
+  async run(): Promise<void> {
+    console.log('🚀 Starting Ultron Agent...');
+    await this.orchestrator.run();
+  }
 
-// MCP Infrastructure
-export { MCPServer } from './infrastructure/mcp/MCPServer';
-export { AgentTools } from './infrastructure/mcp/tools/AgentTools';
-export { MemoryTools } from './infrastructure/mcp/tools/MemoryTools';
-export { ConfigTools } from './infrastructure/mcp/tools/ConfigTools';
+  getRegistry(): PluginRegistry {
+    return this.registry;
+  }
+
+  getOrchestrator(): AgentOrchestrator {
+    return this.orchestrator;
+  }
+}
+
+// Main execution
+if (require.main === module) {
+  const agent = new UltronAgent();
+  agent.initialize().then(() => agent.run()).catch(console.error);
+}
+
+export default UltronAgent;
