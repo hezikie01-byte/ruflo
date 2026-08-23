@@ -36,3 +36,13 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# BEGIN JARVIS MANAGED (see jarvis.gitignore.autoManage)
+.jarvis/logs/
+.jarvis/messages/
+.jarvis/state/
+.jarvis/heartbeat.yaml
+.jarvis/reminders.yaml
+.jarvis/syspilot-state.json
+jarvis-*
+# END JARVIS MANAGED
